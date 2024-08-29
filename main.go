@@ -13,6 +13,7 @@ type task struct{
 	status bool //true == done false == not done
 }
 
+var tasks []task
 var tasksToDo []task
 var tasksDone []task
 
@@ -25,17 +26,17 @@ func newTask(name string, status bool) task {
 
 func createTask (taskname string){
 	t := newTask(taskname, false)
-	taskWriter(t)
-	taskLoader(todoParser())
+	tasks = append(tasks, t)
+	taskLoader(tasks)
 }
 
-
-func taskWriter(task task){
-	i, err := os.Open("./todos")
-	defer i.Close()
-	if err != nil {fmt.Println(err)}
-	
-	i.Write([]byte(fmt.Sprintf("%v", tasklist)) )
+func taskWriter(tasks []task){
+	f, err := os.Create("./todos")
+	if err != nil{fmt.Println(err)}
+	defer f.Close()
+	for _, t := range tasks{
+		f.Write([]byte(fmt.Sprintf("%v, %v\n", t.name, t.status)))
+	}
 }
 
 func taskLoader(tasklist []task){
@@ -49,8 +50,6 @@ func todoParser() []task {
 	i, _ := os.Open("./todos")
 	defer i.Close()
 	
-	var tasks []task
-	
 	scanner := bufio.NewScanner(i)
 	var t task
 	for scanner.Scan(){
@@ -61,7 +60,7 @@ func todoParser() []task {
 		}
 		
 		t.name = fields[0]
-		t.status, _ = strconv.ParseBool(fields[2])
+		t.status, _ = strconv.ParseBool(fields[1])
 
 		tasks = append(tasks, t)
 	}
@@ -72,10 +71,10 @@ func todoParser() []task {
 
 
 func main(){
-	taskLoader(todoParser())
-	createTask("task1")
-	// fmt.Println(tasks)
+	tasks = todoParser() //parse file
+	taskLoader(tasks) //organize lists/
 	fmt.Println("these are the done tasks: ", tasksDone)
 	fmt.Println("thse are the tasks to do: ", tasksToDo)
+	taskWriter(tasks)
 }
 
