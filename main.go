@@ -73,6 +73,7 @@ func todoParser() []task {
 func main(){
 	tasks = todoParser() //parse file
 	taskLoader(tasks) //organize lists/
+	createTask("atante")
 	fmt.Println("these are the done tasks: ", tasksDone)
 	fmt.Println("thse are the tasks to do: ", tasksToDo)
 	taskWriter(tasks)
