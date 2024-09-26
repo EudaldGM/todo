@@ -17,16 +17,9 @@ var tasks []task
 var tasksToDo []task
 var tasksDone []task
 
-func newTask(name string, status bool) task {
-	var t task
-	t.name = name
-	t.status = status
-	return t
-}
-
-func createTask (taskname string){
-	t := newTask(taskname, false)
-	tasks = append(tasks, t)
+func newTask (taskname string){
+	var t = task{name: taskname, status: false}
+	tasks = append(tasks, t) 
 	taskLoader(tasks)
 }
 
@@ -73,7 +66,7 @@ func todoParser() []task {
 func main(){
 	tasks = todoParser() //parse file
 	taskLoader(tasks) //organize lists/
-	createTask("atante")
+	newTask("atante")
 	fmt.Println("these are the done tasks: ", tasksDone)
 	fmt.Println("thse are the tasks to do: ", tasksToDo)
 	taskWriter(tasks)
